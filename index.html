@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Supabase Auth Demo</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/dist/umd/supabase.min.js"></script>
   <style>
     body { font-family: sans-serif; margin: 2em; }
     #user-info { margin-top: 1em; font-weight: bold; }
@@ -26,14 +26,14 @@
     const SUPABASE_URL = 'https://narztpwkqvzujkmexlop.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hcnp0cHdrcXZ6dWprbWV4bG9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyNzUwNTksImV4cCI6MjA1OTg1MTA1OX0.Sjqk-cCZbrGfje4NpRkMohIRrnfHh8n3yiaViMwKarw';
 
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    async function signUp() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const { user, error } = await supabase.auth.signUp({ email, password });
-      alert(error ? error.message : 'Check your email for confirmation!');
-    }
+async function signUp() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const { data, error } = await supabaseClient.auth.signUp({ email, password });
+  alert(error ? error.message : 'Check your email for confirmation!');
+}
 
     async function signIn() {
       const email = document.getElementById('email').value;
