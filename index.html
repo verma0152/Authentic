@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supabase Auth Demo</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    #user-info { margin-top: 1em; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <h2>Supabase Authentication</h2>
+
+  <div id="auth-section">
+    <input type="email" id="email" placeholder="Email" /><br><br>
+    <input type="password" id="password" placeholder="Password" /><br><br>
+    <button onclick="signUp()">Sign Up</button>
+    <button onclick="signIn()">Sign In</button>
+    <button onclick="signOut()">Sign Out</button>
+  </div>
+
+  <div id="user-info"></div>
+
+  <script>
+    const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function signUp() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const { user, error } = await supabase.auth.signUp({ email, password });
+      alert(error ? error.message : 'Check your email for confirmation!');
+    }
+
+    async function signIn() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) alert(error.message);
+      else showUser();
+    }
+
+    async function signOut() {
+      await supabase.auth.signOut();
+      document.getElementById('user-info').innerText = 'Logged out';
+    }
+
+    async function showUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      document.getElementById('user-info').innerText = user ? `Logged in as: ${user.email}` : 'Not logged in';
+    }
+
+    // Check on page load
+    showUser();
+  </script>
+
+</body>
+</html>
