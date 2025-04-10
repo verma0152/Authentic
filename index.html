@@ -1,62 +1,89 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Supabase Authentication</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supabase Auth - Magic Link Flow</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #6dd5ed, #2193b0);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    input {
+      padding: 12px;
+      width: 100%;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #2193b0;
+      color: white;
+      padding: 12px;
+      border: none;
+      width: 100%;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .user-info {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h2>Supabase Authentication</h2>
-
-  <input type="email" id="email" placeholder="Email" />
-  <br><br>
-  <input type="password" id="password" placeholder="Password" />
-  <br><br>
-  <button onclick="signUp()">Sign Up</button>
-  <button onclick="signIn()">Sign In</button>
-  <button onclick="signOut()">Sign Out</button>
-
-  <!-- ✅ Load Supabase library -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <div class="container">
+    <h2>Welcome</h2>
+    <input type="email" id="email" placeholder="Enter your email" />
+    <button onclick="signInWithEmail()">Send Login Link</button>
+    <div class="user-info" id="userInfo"></div>
+    <button onclick="logout()">Logout</button>
+  </div>
 
   <script>
-    // ✅ Your actual Supabase credentials
     const SUPABASE_URL = 'https://narztpwkqvzujkmexlop.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hcnp0cHdrcXZ6dWprbWV4bG9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyNzUwNTksImV4cCI6MjA1OTg1MTA1OX0.Sjqk-cCZbrGfje4NpRkMohIRrnfHh8n3yiaViMwKarw';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...Karw';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ✅ Initialize Supabase client
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    async function signInWithEmail() {
+      const email = document.getElementById('email').value;
+      const { error } = await supabase.auth.signInWithOtp({ email });
+      if (error) alert('Error sending magic link: ' + error.message);
+      else alert('Check your email for the magic link!');
+    }
 
-    async function signUp() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) {
-        alert("Error: " + error.message);
-      } else {
-        alert("Check your email to confirm sign-up!");
+    async function checkUser() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        document.getElementById("userInfo").textContent = "Logged in as: " + user.email;
       }
     }
 
-    async function signIn() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        alert("Error: " + error.message);
-      } else {
-        alert("Login successful!");
-      }
+    async function logout() {
+      await supabase.auth.signOut();
+      document.getElementById("userInfo").textContent = "";
+      alert("Logged out");
     }
 
-    async function signOut() {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        alert("Error: " + error.message);
-      } else {
-        alert("Logged out successfully!");
-      }
-    }
+    checkUser();
   </script>
 </body>
 </html>
