@@ -1,48 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Supabase Authentication</title>
 </head>
 <body>
   <h2>Supabase Authentication</h2>
 
-  <input type="email" id="email" placeholder="Enter email" />
+  <input type="email" id="email" placeholder="Email" />
   <br><br>
-  <input type="password" id="password" placeholder="Enter password" />
+  <input type="password" id="password" placeholder="Password" />
   <br><br>
-
   <button onclick="signUp()">Sign Up</button>
   <button onclick="signIn()">Sign In</button>
   <button onclick="signOut()">Sign Out</button>
 
-  <!-- ✅ Load Supabase UMD library -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.5/dist/umd/supabase.min.js"></script>
+  <!-- ✅ Load Supabase library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    // ✅ Replace these with your actual Supabase project values:
+    // ✅ Your actual Supabase credentials
     const SUPABASE_URL = 'https://narztpwkqvzujkmexlop.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hcnp0cHdrcXZ6dWprbWV4bG9wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyNzUwNTksImV4cCI6MjA1OTg1MTA1OX0.Sjqk-cCZbrGfje4NpRkMohIRrnfHh8n3yiaViMwKarw';
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // ✅ Initialize Supabase client
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     async function signUp() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const { data, error } = await supabaseClient.auth.signUp({ email, password });
-      alert(error ? error.message : 'Sign-up successful! Check your email to confirm.');
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        alert("Error: " + error.message);
+      } else {
+        alert("Check your email to confirm sign-up!");
+      }
     }
 
     async function signIn() {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      alert(error ? error.message : 'Signed in!');
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        alert("Error: " + error.message);
+      } else {
+        alert("Login successful!");
+      }
     }
 
     async function signOut() {
-      const { error } = await supabaseClient.auth.signOut();
-      alert(error ? error.message : 'Signed out!');
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        alert("Error: " + error.message);
+      } else {
+        alert("Logged out successfully!");
+      }
     }
   </script>
 </body>
